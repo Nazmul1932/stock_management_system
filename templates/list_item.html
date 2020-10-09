@@ -1,0 +1,111 @@
+{% load crispy_forms_filters %}
+{% load static %}
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+
+
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Jekyll v3.8.6">
+    <title>{{ title }}</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.4/examples/navbar-fixed/">
+
+    <!-- Bootstrap core CSS -->
+
+     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+      <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/navbar-top-fixed.css' %}" rel="stylesheet">
+  </head>
+  <body>
+  {% include 'navbar.html' %}
+
+<main role="main" class="container">
+    {% if messages %}
+        <ul class="messages">
+               {% for message in messages %}
+                     <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+               {% endfor %}
+       </ul>
+   {% endif %}
+  <div class="jumbotron">
+    <div class="header">{{ title }}</div>
+
+    <form method='POST' action=''>{% csrf_token %}
+        {{form|crispy}}
+        <input type="submit" value='Search'/>
+</form>
+<br>
+
+  <div class="display_table">
+    <table class='table'>
+        <thead>
+          <tr>
+             <th style="font-size: 20px;">COUNT</th>
+              <th style="font-size: 20px;">ID</th>
+             <th style="font-size: 20px;">CATEGORY</th>
+             <th style="font-size: 20px;">ITEM NAME</th>
+             <th style="font-size: 20px;">QUANTITY</th>
+              <th style="font-size: 20px;">Re-order Level</th>
+             <th style="font-size: 20px;">Time Stamp</th>
+             <th style="font-size: 20px;">Last Update</th>
+             <th style="font-size: 20px;">Action</th>
+             <th></th>
+          </tr>
+        </thead>
+      {% for item in items %}
+          <tr>
+            <td style="font-size: 20px;">{{forloop.counter}}</td>
+            <td style="font-size: 20px;">{{item.id}}</td>
+            <td style="font-size: 20px;">{{item.category}}</td>
+            <td style="font-size: 20px;">{{item.item_name}}</td>
+            <td style="font-size: 20px;">
+                {% if item.quantity <=  item.reorder_level %}
+                    <div style="background-color: red;">
+                        <a href="{% url 'stock_detail' item.id %}">{{ item.quantity }}</a>
+                    </div>
+                    {% else %}
+                        <a href="{% url 'stock_detail' item.id %}">{{ item.quantity }}</a>
+                {% endif %}
+            </td>
+            <td style="font-size: 20px;"><a href="{% url 'reorder_level' item.id %}">{{item.reorder_level}}</a></td>
+            <td style="font-size: 20px;">{{ item.timestamp }}</td>
+            <td style="font-size: 20px;">{{ item.last_updated }}</td>
+            <td style="font-size: 20px;"><a class="btn btn-dark" href="{% url 'delete_items' item.id %}">Delete</a></td>
+            <td style="font-size: 20px;"><a class="btn btn-info" href="{% url 'update_items' item.id %}">Edit</a></td>
+          </tr>
+      {% endfor %}
+    </table>
+  </div>
+  </div>
+</main>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+  <script>window.jQuery || document.write('<script src="/docs/4.4/assets/js/vendor/jquery.slim.min.js"><\/script>')</script>
+  <script src="/docs/4.4/dist/js/bootstrap.bundle.min.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>
+  </body>
+</html>
